@@ -1,6 +1,4 @@
-function divide(x, y) {
-  if (y === 0) {
-    throw 'Division by zero'
-  }
-  return x / y
-}
+gtag('event', 'exception', {
+  'description': 'error_description',
+  'fatal': true,   // set to true if the error is fatal
+})
