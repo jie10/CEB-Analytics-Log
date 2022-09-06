@@ -1,30 +1,50 @@
-gtag('event', 'exception', {
-  'description': 'error_description',
-  'fatal': true,   // set to true if the error is fatal
+/**
+ * Track JS error details in Universal Analytics
+ */
+
+function trackJavaScriptError(e) {
+  var errMsg = e.message
+  var errSrc = e.filename + ': ' + e.lineno
+  ga('send', 'event', 'JavaScript Error', errMsg, errSrc, {'nonInteraction': 1})
+}
+
+/**
+ * Cross-browser event listener
+ */
+
+if (window.addEventListener) {
+  window.addEventListener('error', trackJavaScriptError, false)
+} else if (window.attachEvent) {
+  window.attachEvent('onerror', trackJavaScriptError)
+} else {
+  window.onerror = trackJavaScriptError
+}
+
+/**
+ * Capture Ajax call error using jQuery
+ *
+ * an AngularJS alternative
+ * http://stackoverflow.com/questions/11971213/global-ajax-error-handler-with-angularjs
+ * http://www.codelord.net/2014/06/25/generic-error-handling-in-angularjs/
+ */
+
+$(document).ajaxError(function (e, request, settings) {
+  var errMsg = settings.url
+  var errSrc = e.result
+
+  ga('send', 'event', 'Ajax error', errMsg, errSrc, {'nonInteraction': 1})
 })
 
-try {
+/**
+ * Global exception handeling within AngularJS
+ * http://stackoverflow.com/questions/13595469/how-to-override-exceptionhandler-implementation
+ */
 
-  alert('Start of try runs')  // (1) <--
+var mod = angular.module('testApp', [])
 
-  // ...no errors here
-
-  alert('End of try runs')   // (2) <--
-
-} catch (err) {
-
-  alert('Catch is ignored, because there are no errors') // (3)
-
-}
-
-try {
-  lalala // error, variable is not defined!
-} catch (err) {
-  alert(err.name) // ReferenceError
-  alert(err.message) // lalala is not defined
-  alert(err.stack) // ReferenceError: lalala is not defined at (...call stack)
-
-  // Can also show an error as a whole
-  // The error is converted to string as "name: message"
-  alert(err) // ReferenceError: lalala is not defined
-}
+mod.factory('$exceptionHandler', function () {
+  return function (exception, cause) {
+    // alert(exception.message);
+    trackJavaScriptError(exception)
+  }
+})
