@@ -26,10 +26,7 @@
       }
 
       gtag("js", new Date())
-      gtag("event", "exception", {
-        "description": "error_description",
-        "fatal": true,   // set to true if the error is fatal
-      })
+
 
       gtag("config", "UA-248117124-1")
     </script>
@@ -45,10 +42,6 @@
       }
 
       gtag("js", new Date())
-      gtag("event", "exception", {
-        "description": "error_description",
-        "fatal": true,   // set to true if the error is fatal
-      })
       gtag("config", "G-YEPNZYPBDR")
     </script>
 
@@ -87,7 +80,12 @@
 <div>
     <button onclick="myFunction()">Click me</button>
 </div>
-
+<script>
+  gtag("event", "exception", {
+    "description": "error_description",
+    "fatal": true,   // set to true if the error is fatal
+  })
+</script>
 <script src="script.js"></script>
 </body>
 </html>
